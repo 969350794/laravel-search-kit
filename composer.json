@@ -1,0 +1,46 @@
+{
+    "name": "969350794/laravel-search-kit",
+    "description": "Laravel Search Kit - A flexible search filter package for Laravel",
+    "keywords": [
+        "laravel12",
+        "search",
+        "kit",
+        "filter",
+        "query"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "969350794",
+            "email": "969350794@qq.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "A969350794\\LaravelSearchKit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "A969350794\\LaravelSearchKit\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "A969350794\\LaravelSearchKit\\LaravelSearchKitServiceProvider"
+            ]
+        }
+    },
+    "support": {
+        "issues": "https://github.com/your-repo/issues",
+        "source": "https://github.com/your-repo/laravel-search-kit"
+    }
+}
