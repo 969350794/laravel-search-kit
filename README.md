@@ -14,7 +14,7 @@
 ## 📦 安装
 
 ```bash
-composer require 969350794/laravel-search-kit
+composer require "969350794/laravel-search-kit:^1.*"
 ```
 
 安装后，Laravel 会自动发现并注册服务提供者，无需任何配置即可使用。

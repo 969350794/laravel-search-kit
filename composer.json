@@ -8,6 +8,7 @@
         "filter",
         "query"
     ],
+    "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
         {
