@@ -10,12 +10,27 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * BETWEEN 过滤 (between start and end)
  *
+ * 用于查询某个范围内的值，支持闭区间 [start, end]，也支持单边条件
+ *
  * 配置示例:
  * 'price' => [
  *     'filter' => BetweenFilter::class,
  *     'column' => 'price',
  *     'params' => ['column', 'key:price_min', 'key:price_max'],
  * ],
+ * 
+ * 使用示例:
+ * // 查询价格在 100 到 500 之间的商品
+ * $filter = new BetweenFilter('price', 100, 500);
+ * // SQL: WHERE price BETWEEN 100 AND 500
+ * 
+ * // 查询价格大于等于 100 的商品（只有下限）
+ * $filter = new BetweenFilter('price', 100, null);
+ * // SQL: WHERE price >= 100
+ * 
+ * // 查询价格小于等于 500 的商品（只有上限）
+ * $filter = new BetweenFilter('price', null, 500);
+ * // SQL: WHERE price <= 500
  */
 class BetweenFilter implements QueryFilter
 {

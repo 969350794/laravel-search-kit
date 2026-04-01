@@ -3,15 +3,9 @@
 namespace A969350794\LaravelSearchKit\Tests\Filters;
 
 use A969350794\LaravelSearchKit\Tests\TestCase;
-use A969350794\LaravelSearchKit\Filters\Shared\EqualFilter;
-use A969350794\LaravelSearchKit\Filters\Shared\NotEqualFilter;
-use A969350794\LaravelSearchKit\Filters\Shared\GreaterThanFilter;
-use A969350794\LaravelSearchKit\Filters\Shared\GreaterThanOrEqualFilter;
-use A969350794\LaravelSearchKit\Filters\Shared\LessThanFilter;
-use A969350794\LaravelSearchKit\Filters\Shared\LessThanOrEqualFilter;
+use A969350794\LaravelSearchKit\Filters\Shared\ComparisonFilter;
+use A969350794\LaravelSearchKit\Filters\Shared\InFilter;
 use A969350794\LaravelSearchKit\Filters\Shared\LikeFilter;
-use A969350794\LaravelSearchKit\Filters\Shared\LikeStartFilter;
-use A969350794\LaravelSearchKit\Filters\Shared\LikeEndFilter;
 use A969350794\LaravelSearchKit\Filters\Shared\DateRangeFilter;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -19,49 +13,11 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 class FilterTest extends TestCase
 {
     /**
-     * 测试 EqualFilter
-     */
-    public function test_equal_filter()
-    {
-        $filter = new EqualFilter('status', 'active');
-
-        $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockEloquentBuilder->expects($this->once())
-            ->method('where')
-            ->with('status', '=', 'active')
-            ->willReturn($mockEloquentBuilder);
-
-        $result = $filter->apply($mockEloquentBuilder);
-        $this->assertSame($mockEloquentBuilder, $result);
-    }
-
-    /**
-     * 测试 NotEqualFilter
-     */
-    public function test_not_equal_filter()
-    {
-        $filter = new NotEqualFilter('status', 'inactive');
-
-        $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockEloquentBuilder->expects($this->once())
-            ->method('where')
-            ->with('status', '!=', 'inactive')
-            ->willReturn($mockEloquentBuilder);
-
-        $result = $filter->apply($mockEloquentBuilder);
-        $this->assertSame($mockEloquentBuilder, $result);
-    }
-
-    /**
-     * 测试 GreaterThanFilter
+     * 测试 ComparisonFilter (> 操作符)
      */
     public function test_greater_than_filter()
     {
-        $filter = new GreaterThanFilter('price', 150);
+        $filter = new ComparisonFilter('price', 150, '>');
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
@@ -76,11 +32,11 @@ class FilterTest extends TestCase
     }
 
     /**
-     * 测试 GreaterThanOrEqualFilter
+     * 测试 ComparisonFilter (>= 操作符)
      */
     public function test_greater_than_or_equal_filter()
     {
-        $filter = new GreaterThanOrEqualFilter('price', 150);
+        $filter = new ComparisonFilter('price', 150, '>=');
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
@@ -95,11 +51,11 @@ class FilterTest extends TestCase
     }
 
     /**
-     * 测试 LessThanFilter
+     * 测试 ComparisonFilter (< 操作符)
      */
     public function test_less_than_filter()
     {
-        $filter = new LessThanFilter('price', 150);
+        $filter = new ComparisonFilter('price', 150, '<');
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
@@ -114,11 +70,11 @@ class FilterTest extends TestCase
     }
 
     /**
-     * 测试 LessThanOrEqualFilter
+     * 测试 ComparisonFilter (<= 操作符)
      */
     public function test_less_than_or_equal_filter()
     {
-        $filter = new LessThanOrEqualFilter('price', 150);
+        $filter = new ComparisonFilter('price', 150, '<=');
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
@@ -133,18 +89,18 @@ class FilterTest extends TestCase
     }
 
     /**
-     * 测试 LikeFilter
+     * 测试 ComparisonFilter (= 操作符)
      */
-    public function test_like_filter()
+    public function test_comparison_eq_filter()
     {
-        $filter = new LikeFilter('name', 'test');
+        $filter = new ComparisonFilter('status', 'active', '=');
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
         $mockEloquentBuilder->expects($this->once())
             ->method('where')
-            ->with('name', 'like', '%test%')
+            ->with('status', '=', 'active')
             ->willReturn($mockEloquentBuilder);
 
         $result = $filter->apply($mockEloquentBuilder);
@@ -152,11 +108,68 @@ class FilterTest extends TestCase
     }
 
     /**
-     * 测试 LikeStartFilter
+     * 测试 ComparisonFilter (!= 操作符)
      */
-    public function test_like_start_filter()
+    public function test_comparison_ne_filter()
     {
-        $filter = new LikeStartFilter('name', 'test');
+        $filter = new ComparisonFilter('status', 'inactive', '!=');
+
+        $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockEloquentBuilder->expects($this->once())
+            ->method('where')
+            ->with('status', '!=', 'inactive')
+            ->willReturn($mockEloquentBuilder);
+
+        $result = $filter->apply($mockEloquentBuilder);
+        $this->assertSame($mockEloquentBuilder, $result);
+    }
+
+    /**
+     * 测试 InFilter (默认模式 - in)
+     */
+    public function test_in_filter()
+    {
+        $filter = new InFilter('status', ['active', 'pending']);
+
+        $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockEloquentBuilder->expects($this->once())
+            ->method('whereIn')
+            ->with('status', ['active', 'pending'])
+            ->willReturn($mockEloquentBuilder);
+
+        $result = $filter->apply($mockEloquentBuilder);
+        $this->assertSame($mockEloquentBuilder, $result);
+    }
+
+    /**
+     * 测试 InFilter (not_in 模式)
+     */
+    public function test_not_in_filter()
+    {
+        $filter = new InFilter('status', ['inactive', 'deleted'], InFilter::MODE_NOT_IN);
+
+        $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockEloquentBuilder->expects($this->once())
+            ->method('whereNotIn')
+            ->with('status', ['inactive', 'deleted'])
+            ->willReturn($mockEloquentBuilder);
+
+        $result = $filter->apply($mockEloquentBuilder);
+        $this->assertSame($mockEloquentBuilder, $result);
+    }
+
+    /**
+     * 测试 LikeFilter (默认模式 - start)
+     */
+    public function test_like_filter()
+    {
+        $filter = new LikeFilter('name', 'test');
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
@@ -171,11 +184,11 @@ class FilterTest extends TestCase
     }
 
     /**
-     * 测试 LikeEndFilter
+     * 测试 LikeFilter (end 模式)
      */
     public function test_like_end_filter()
     {
-        $filter = new LikeEndFilter('name', 'test');
+        $filter = new LikeFilter('name', 'test', LikeFilter::MODE_END);
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
@@ -183,6 +196,25 @@ class FilterTest extends TestCase
         $mockEloquentBuilder->expects($this->once())
             ->method('where')
             ->with('name', 'like', '%test')
+            ->willReturn($mockEloquentBuilder);
+
+        $result = $filter->apply($mockEloquentBuilder);
+        $this->assertSame($mockEloquentBuilder, $result);
+    }
+
+    /**
+     * 测试 LikeFilter (both 模式)
+     */
+    public function test_like_both_filter()
+    {
+        $filter = new LikeFilter('name', 'test', LikeFilter::MODE_BOTH);
+
+        $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockEloquentBuilder->expects($this->once())
+            ->method('where')
+            ->with('name', 'like', '%test%')
             ->willReturn($mockEloquentBuilder);
 
         $result = $filter->apply($mockEloquentBuilder);
@@ -253,7 +285,7 @@ class FilterTest extends TestCase
     public function test_filters_with_null_values()
     {
         // 测试列名为 null 的情况
-        $filter = new EqualFilter(null, 'some_value');
+        $filter = new ComparisonFilter(null, 'some_value');
 
         $mockEloquentBuilder = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()
@@ -266,7 +298,7 @@ class FilterTest extends TestCase
         $this->assertSame($mockEloquentBuilder, $result);
 
         // 测试值为空字符串的情况
-        $filter2 = new EqualFilter('status', '');
+        $filter2 = new ComparisonFilter('status', '');
 
         $mockEloquentBuilder2 = $this->getMockBuilder(EloquentBuilder::class)
             ->disableOriginalConstructor()

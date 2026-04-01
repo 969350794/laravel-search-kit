@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * Enum 过滤
  * 
+ * 用于枚举类型的字段查询，自动验证值的有效性并进行类型转换
+ * 
  * 配置示例:
  * 'status' => [
  *     'filter' => EnumFilter::class,
@@ -17,6 +19,15 @@ use Illuminate\Database\Eloquent\Builder;
  *     'enum' => CompanyStatus::class,
  *     'params' => ['column', 'enum', 'value'],
  * ],
+ * 
+ * 使用示例:
+ * // 查询状态为 Active 的公司
+ * $filter = new EnumFilter('status', CompanyStatus::class, 'active');
+ * // SQL: WHERE status = 1 (假设 active 对应的值为 1)
+ * 
+ * // 查询用户类型为 VIP 的记录
+ * $filter = new EnumFilter('user_type', UserType::class, UserType::VIP);
+ * // SQL: WHERE user_type = 2 (假设 VIP 对应的值为 2)
  */
 class EnumFilter implements QueryFilter
 {

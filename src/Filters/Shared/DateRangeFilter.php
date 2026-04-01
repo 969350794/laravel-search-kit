@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * 日期范围过滤
  *
+ * 用于查询日期时间范围内的记录，支持自定义操作符和单边条件
+ *
  * 配置示例:
  *
  * 默认使用 >= 和 <=:
@@ -23,10 +25,19 @@ use Illuminate\Database\Eloquent\Builder;
  * 'created_at' => [
  *     'filter' => DateRangeFilter::class,
  *     'column' => 'created_at',
- *     'start_operator' => '>',  // 可选: >=, >, 默认 >=
- *     'end_operator' => '<',    // 可选: <=, <, 默认 <=
+ *     'start_operator' => '>',  // 可选：>=, >, 默认 >=
+ *     'end_operator' => '<',    // 可选：<=, <, 默认 <=
  *     'params' => ['column', 'key:created_at_start', 'key:created_at_end', 'start_operator', 'end_operator'],
  * ],
+ * 
+ * 使用示例:
+ * // 查询 2024 年创建的记录
+ * $filter = new DateRangeFilter('created_at', '2024-01-01', '2024-12-31');
+ * // SQL: WHERE created_at >= '2024-01-01' AND created_at <= '2024-12-31'
+ * 
+ * // 查询 2024 年之后的记录（不包含 2024）
+ * $filter = new DateRangeFilter('created_at', '2024-01-01', null, '>');
+ * // SQL: WHERE created_at > '2024-01-01'
  */
 class DateRangeFilter implements QueryFilter
 {
